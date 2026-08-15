@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screen Dimmer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Screen Dimmer</h1>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="dimmer">Dimmer</button>
+        <button class="tab-btn" data-tab="options">Options</button>
+      </nav>
+    </header>
+
+    <section id="tab-dimmer" class="tab-panel active">
+      <div class="subtitle-row">
+        <p class="subtitle">Dim your screens below Windows' 0% brightness</p>
+        <button id="identify-btn" class="ghost-btn">Identify</button>
+      </div>
+      <main id="monitors"></main>
+    </section>
+
+    <section id="tab-options" class="tab-panel">
+      <div class="option-row">
+        <span>Start with Windows</span>
+        <label class="switch">
+          <input type="checkbox" id="autostart-toggle" />
+          <span class="switch-track"></span>
+        </label>
+      </div>
+
+      <div class="option-group">
+        <div class="option-title">When the window is closed</div>
+        <div class="segmented">
+          <label class="segment">
+            <input type="radio" name="close-behavior" value="minimize" />
+            <span>Minimize to tray</span>
+          </label>
+          <label class="segment">
+            <input type="radio" name="close-behavior" value="quit" />
+            <span>Quit the app</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

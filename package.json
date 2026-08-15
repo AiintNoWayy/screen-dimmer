@@ -1,0 +1,22 @@
+{
+  "name": "screen-dimmer",
+  "version": "0.1.0",
+  "description": "Dim your screens below Windows' native 0% brightness, per monitor.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-store": "^2.4.4",
+    "@tauri-apps/plugin-autostart": "^2.5.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "vite": "^8.2.1"
+  }
+}

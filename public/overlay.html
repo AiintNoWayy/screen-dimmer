@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        background: transparent;
+        overflow: hidden;
+      }
+
+      #veil {
+        width: 100%;
+        height: 100%;
+        background: #000;
+        opacity: 0;
+      }
+
+      #identify {
+        display: none;
+        position: fixed;
+        inset: 0;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      #identify span {
+        font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+        font-size: 15vh;
+        font-weight: 700;
+        color: #fff;
+        background: rgba(20, 20, 24, 0.78);
+        border-radius: 32px;
+        padding: 0.15em 0.55em;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="veil"></div>
+    <div id="identify"><span id="identify-number"></span></div>
+    <script>
+      function setDim(ratio) {
+        document.getElementById("veil").style.opacity = ratio;
+      }
+
+      let identifyTimer;
+      function identify(number, ms) {
+        const el = document.getElementById("identify");
+        document.getElementById("identify-number").textContent = number;
+        el.style.display = "flex";
+        clearTimeout(identifyTimer);
+        identifyTimer = setTimeout(() => {
+          el.style.display = "none";
+        }, ms);
+      }
+    </script>
+  </body>
+</html>
