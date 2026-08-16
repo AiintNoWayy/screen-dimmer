@@ -14,7 +14,6 @@ use tauri_plugin_autostart::ManagerExt;
 #[derive(Serialize, Clone)]
 struct MonitorInfo {
     id: String,
-    label: String,
     x: i32,
     y: i32,
     width: u32,
@@ -72,19 +71,21 @@ fn apply_dim(window: &WebviewWindow, value: u8) -> tauri::Result<()> {
 #[tauri::command]
 fn list_monitors(app: AppHandle) -> Result<Vec<MonitorInfo>, String> {
     let monitors = app.available_monitors().map_err(|e| e.to_string())?;
-    Ok(monitors
+    let mut infos: Vec<MonitorInfo> = monitors
         .iter()
         .take(MAX_MONITORS)
         .enumerate()
         .map(|(i, m)| MonitorInfo {
             id: monitor_id(i, m.name()),
-            label: format!("Display {}", i + 1),
             x: m.position().x,
             y: m.position().y,
             width: m.size().width,
             height: m.size().height,
         })
-        .collect())
+        .collect();
+    // Sensible default order until the user picks their own in the UI.
+    infos.sort_by_key(|m| m.x);
+    Ok(infos)
 }
 
 #[tauri::command]
@@ -104,19 +105,13 @@ fn set_dim(
 
 #[tauri::command]
 async fn identify_displays(
-    app: AppHandle,
     overlays: tauri::State<'_, Overlays>,
     dims: tauri::State<'_, DimValues>,
+    order: Vec<String>,
 ) -> Result<(), String> {
     const DURATION_MS: u64 = 1800;
 
-    let monitors = app.available_monitors().map_err(|e| e.to_string())?;
-    let ids: Vec<String> = monitors
-        .iter()
-        .take(MAX_MONITORS)
-        .enumerate()
-        .map(|(i, m)| monitor_id(i, m.name()))
-        .collect();
+    let ids: Vec<String> = order.into_iter().take(MAX_MONITORS).collect();
 
     {
         let windows = overlays.0.lock().map_err(|e| e.to_string())?;
@@ -167,6 +162,13 @@ fn set_close_behavior(state: tauri::State<CloseBehavior>, minimize: bool) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
