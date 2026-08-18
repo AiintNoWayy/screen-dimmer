@@ -205,6 +205,24 @@ pub fn run() {
                 }
             }
 
+            // Windows can silently demote a topmost window (another app briefly
+            // claims topmost, a fullscreen-borderless app launches, etc.). Keep
+            // re-asserting it on every visible overlay so dimming stays above
+            // regular and fullscreen-windowed apps, not just the desktop.
+            let topmost_handle = handle.clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
+                    let state = topmost_handle.state::<Overlays>();
+                    let Ok(windows) = state.0.lock() else { continue };
+                    for window in windows.values() {
+                        if window.is_visible().unwrap_or(false) {
+                            let _ = window.set_always_on_top(true);
+                        }
+                    }
+                }
+            });
+
             if let Some(main) = app.get_webview_window("main") {
                 let close_target = main.clone();
                 let app_handle = app.handle().clone();
