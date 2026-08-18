@@ -172,7 +172,7 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            None,
+            Some(vec!["--hidden"]),
         ))
         .manage(Overlays(Mutex::new(HashMap::new())))
         .manage(DimValues(Mutex::new(HashMap::new())))
@@ -224,6 +224,11 @@ pub fn run() {
             });
 
             if let Some(main) = app.get_webview_window("main") {
+                let start_hidden = std::env::args().any(|a| a == "--hidden");
+                if !start_hidden {
+                    let _ = main.show();
+                }
+
                 let close_target = main.clone();
                 let app_handle = app.handle().clone();
                 main.on_window_event(move |event| {

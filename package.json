@@ -1,6 +1,6 @@
 {
   "name": "screen-dimmer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Dim your screens below Windows' native 0% brightness, per monitor.",
   "type": "module",
   "scripts": {
